@@ -1,4 +1,14 @@
+%% Fun With Filters!!!
 function extend (filename)
+
+% So far, I have had little trouble with MATLAB and the sensor app interface,
+% and I have been able to make some good progress on filtering and viewing
+% data. Thus far I have not really implemented any step counting algorithms.
+% Although I have implemented a Short-Time-Digital-Filter (stdf.m) that
+% uses a FIR filter designed by the FDATool and applies a general Hanning
+% Window. You can see from both the sample and frequency domain plots 
+% that the stdf works pretty well.
+
 
 if (nargin == 0)
 	filename = 'data/walking_from_cc_11_11.txt';
@@ -22,12 +32,10 @@ for i = 1:length(accData)
 end
 
 %% Compute squares, magnitude, un bias 
-x2 = extended(1,1:10000).^2;
-y2 = extended(2,1:10000).^2;
-z2 = extended(3,1:10000).^2;
-
+x2  = extended(1,1:10000).^2;
+y2  = extended(2,1:10000).^2;
+z2  = extended(3,1:10000).^2;
 mag = sqrt(x2+y2+z2);
-norm_mag = mag - mean(mag);
 
 %% Build filters
 
@@ -58,6 +66,7 @@ pStruct(2).mag	= stdf  ( d140, pStruct( 1 ).mag, 500);
 
 %% Frequency of Unbiased Original Magnitude signal
 figure;
+norm_mag = mag - mean(mag);
 Mag = fftshift(fft(norm_mag));
 stem(abs(Mag));
 axis([4950 5050 0 11000]);
@@ -69,6 +78,7 @@ filt_norm_mag = pStruct(2).mag - mean(pStruct(2).mag);
 filt_Mag = fftshift(fft(filt_norm_mag));
 stem(abs(filt_Mag));
 axis([4950 5050 0 18000]);
+title('Unbiased Filtered Freq Breakdown (5000 is center)')
 
 %% Plot
 plotStruct(pStruct,2);
