@@ -4,65 +4,68 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
    <!--
-This HTML is auto-generated from an M-file.
-To make changes, update the M-file and republish this document.
-      --><title>extend</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2013-11-26"><meta name="m-file" content="extend"><style type="text/css">
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>extend</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-11-26"><meta name="DC.source" content="extend.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
-body {
-  background-color: white;
-  margin:10px;
-}
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
 
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
 
-h2 {
-  color: #990000;
-  font-size: medium;
-}
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
 
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
 
-pre.codeinput {
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-} 
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
 
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #A020F0}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre.codeoutput {
-  color: #666666;
-  padding: 10px;
-}
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
 
-pre.error {
-  color: red;
-}
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">parse and resample sensor data</a></li><li><a href="#4">Compute squares, magnitude, un bias</a></li><li><a href="#5">Build filters</a></li><li><a href="#6">Populate struct array</a></li><li><a href="#7">Plot</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> extend (filename)
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">parse and resample sensor data</a></li><li><a href="#4">Compute squares, magnitude, un bias</a></li><li><a href="#5">Build filters</a></li><li><a href="#6">Populate struct array</a></li><li><a href="#7">Frequency of Unbiased Original Magnitude signal</a></li><li><a href="#8">Frequency of Unbiased LowPass Filtered (140 Hz Knee) Magnitude signal</a></li><li><a href="#9">Plot</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> extend (filename)
 </pre><pre class="codeinput"><span class="keyword">if</span> (nargin == 0)
 	filename = <span class="string">'data/walking_from_cc_11_11.txt'</span>;
 <span class="keyword">end</span>
@@ -98,65 +101,30 @@ norm_mag = mag - mean(mag);
 <span class="comment">% Dstop = 0.0001;          % Stopband Attenuation</span>
 <span class="comment">% dens  = 20;              % Density Factor</span>
 d140 = drop140();
-
-
-
-<span class="comment">% IIR maximally flat Lowpass filter designed using the MAXFLAT function.</span>
-<span class="comment">% All frequency values are in Hz.</span>
-<span class="comment">% Fs = 1000;  % Sampling Frequency</span>
-
-<span class="comment">% Nb = 8;   % Numerator Order</span>
-<span class="comment">% Na = 8;   % Denominator Order</span>
-<span class="comment">% Fc = 20;  % Cutoff Frequency</span>
-d20  = drop20();
-</pre><h2>Populate struct array<a name="6"></a></h2><pre class="codeinput">pStruct(1).x 	= extended(1,1:10000);
+</pre><h2>Populate struct array<a name="6"></a></h2><pre class="codeinput">pStruct(1).name = <span class="string">'original'</span>;
+pStruct(1).x 	= extended(1,1:10000);
 pStruct(1).y 	= extended(2,1:10000);
 pStruct(1).z 	= extended(3,1:10000);
 pStruct(1).mag	= mag;
 
-
-pStruct(2).x	= filter( d140, pStruct( 1 ).x   );
-pStruct(2).y	= filter( d140, pStruct( 1 ).y   );
-pStruct(2).z	= filter( d140, pStruct( 1 ).z   );
-pStruct(2).mag 	= filter( d140, norm_mag         );
-pStruct(3).x	= filter( d20 , pStruct( 1 ).x   );
-pStruct(3).y	= filter( d20 , pStruct( 1 ).y   );
-pStruct(3).z	= filter( d20 , pStruct( 1 ).z   );
-pStruct(3).mag 	= filter( d20 , norm_mag         );
-<span class="comment">% pStruct(4).x	= stdf  ( d140, pStruct( 1 ).x, 360);</span>
-<span class="comment">% pStruct(4).y	= stdf  ( d140, pStruct( 1 ).y, 360);</span>
-<span class="comment">% pStruct(4).z	= stdf  ( d140, pStruct( 1 ).z, 360);</span>
-<span class="comment">% pStruct(4).mag	= stdf  ( d140, pStruct( 1 ).mag, 360);</span>
-<span class="comment">% pStruct(5).x	= stdf  ( d20 , pStruct( 1 ).x, 360);</span>
-<span class="comment">% pStruct(5).y	= stdf  ( d20 , pStruct( 1 ).y, 360);</span>
-<span class="comment">% pStruct(5).z	= stdf  ( d20 , pStruct( 1 ).z, 360);</span>
-<span class="comment">% pStruct(5).mag	= stdf  ( d20 , pStruct( 1 ).mag, 360);</span>
-</pre><h2>Plot<a name="7"></a></h2><pre class="codeinput">plotStruct(pStruct,3);
-
-
-<span class="comment">% Mag = fftshift(fft(filtered));</span>
-
-<span class="comment">% spectrogram(filtered, 8);</span>
-
-
-<span class="comment">%</span>
-<span class="comment">% midpt = ceil(length(Mag)/2);</span>
-<span class="comment">% window_width = 1000;</span>
-<span class="comment">% viewing_window = midpt-window_width:midpt+window_width;</span>
-<span class="comment">%</span>
-<span class="comment">% plotStruct(pStruct,depth);</span>
-<span class="comment">%</span>
-<span class="comment">%</span>
-<span class="comment">% stem(abs(Mag(viewing_window)));</span>
-<span class="comment">%</span>
-</pre><img vspace="5" hspace="5" src="extend_01.png" alt=""> <img vspace="5" hspace="5" src="extend_02.png" alt=""> <img vspace="5" hspace="5" src="extend_03.png" alt=""> <pre class="codeoutput">Input argument "depth" is undefined.
-
-Error in ==&gt; plotStruct at 3
-for i = 1:depth
-</pre><pre class="codeinput"><span class="keyword">end</span>
-<span class="comment">% title ('frequency breakdown');</span>
-</pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.10<br></p></div><!--
+pStruct(2).name = <span class="string">'STDF 140HZ filter, N = 500'</span>;
+pStruct(2).x	= stdf  ( d140, pStruct( 1 ).x,   500);
+pStruct(2).y	= stdf  ( d140, pStruct( 1 ).y,   500);
+pStruct(2).z	= stdf  ( d140, pStruct( 1 ).z,   500);
+pStruct(2).mag	= stdf  ( d140, pStruct( 1 ).mag, 500);
+</pre><h2>Frequency of Unbiased Original Magnitude signal<a name="7"></a></h2><pre class="codeinput">figure;
+Mag = fftshift(fft(norm_mag));
+stem(abs(Mag));
+axis([4950 5050 0 11000]);
+title(<span class="string">'Unbiased Original Freq Breakdown (5000 is center)'</span>);
+</pre><img vspace="5" hspace="5" src="extend_01.png" alt=""> <h2>Frequency of Unbiased LowPass Filtered (140 Hz Knee) Magnitude signal<a name="8"></a></h2><pre class="codeinput">figure;
+filt_norm_mag = pStruct(2).mag - mean(pStruct(2).mag);
+filt_Mag = fftshift(fft(filt_norm_mag));
+stem(abs(filt_Mag));
+axis([4950 5050 0 18000]);
+</pre><img vspace="5" hspace="5" src="extend_02.png" alt=""> <h2>Plot<a name="9"></a></h2><pre class="codeinput">plotStruct(pStruct,2);
+</pre><img vspace="5" hspace="5" src="extend_03.png" alt=""> <img vspace="5" hspace="5" src="extend_04.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function extend (filename)
 
@@ -203,65 +171,37 @@ norm_mag = mag - mean(mag);
 d140 = drop140();
 
 
-
-% IIR maximally flat Lowpass filter designed using the MAXFLAT function.
-% All frequency values are in Hz.
-% Fs = 1000;  % Sampling Frequency
-
-% Nb = 8;   % Numerator Order
-% Na = 8;   % Denominator Order
-% Fc = 20;  % Cutoff Frequency
-d20  = drop20();
-
-
 %% Populate struct array
+pStruct(1).name = 'original';
 pStruct(1).x 	= extended(1,1:10000);
 pStruct(1).y 	= extended(2,1:10000);
 pStruct(1).z 	= extended(3,1:10000);
 pStruct(1).mag	= mag;
 
+pStruct(2).name = 'STDF 140HZ filter, N = 500';
+pStruct(2).x	= stdf  ( d140, pStruct( 1 ).x,   500);
+pStruct(2).y	= stdf  ( d140, pStruct( 1 ).y,   500);
+pStruct(2).z	= stdf  ( d140, pStruct( 1 ).z,   500);
+pStruct(2).mag	= stdf  ( d140, pStruct( 1 ).mag, 500);
 
-pStruct(2).x	= filter( d140, pStruct( 1 ).x   );
-pStruct(2).y	= filter( d140, pStruct( 1 ).y   );
-pStruct(2).z	= filter( d140, pStruct( 1 ).z   );
-pStruct(2).mag 	= filter( d140, norm_mag         );
-pStruct(3).x	= filter( d20 , pStruct( 1 ).x   );
-pStruct(3).y	= filter( d20 , pStruct( 1 ).y   );
-pStruct(3).z	= filter( d20 , pStruct( 1 ).z   );
-pStruct(3).mag 	= filter( d20 , norm_mag         );
-% pStruct(4).x	= stdf  ( d140, pStruct( 1 ).x, 360);
-% pStruct(4).y	= stdf  ( d140, pStruct( 1 ).y, 360);
-% pStruct(4).z	= stdf  ( d140, pStruct( 1 ).z, 360);
-% pStruct(4).mag	= stdf  ( d140, pStruct( 1 ).mag, 360);
-% pStruct(5).x	= stdf  ( d20 , pStruct( 1 ).x, 360);
-% pStruct(5).y	= stdf  ( d20 , pStruct( 1 ).y, 360);
-% pStruct(5).z	= stdf  ( d20 , pStruct( 1 ).z, 360);
-% pStruct(5).mag	= stdf  ( d20 , pStruct( 1 ).mag, 360);
+%% Frequency of Unbiased Original Magnitude signal
+figure;
+Mag = fftshift(fft(norm_mag));
+stem(abs(Mag));
+axis([4950 5050 0 11000]);
+title('Unbiased Original Freq Breakdown (5000 is center)');
 
-
-
+%% Frequency of Unbiased LowPass Filtered (140 Hz Knee) Magnitude signal
+figure;
+filt_norm_mag = pStruct(2).mag - mean(pStruct(2).mag);
+filt_Mag = fftshift(fft(filt_norm_mag));
+stem(abs(filt_Mag));
+axis([4950 5050 0 18000]);
 
 %% Plot
-plotStruct(pStruct,3);
-
-
-% Mag = fftshift(fft(filtered));
-
-% spectrogram(filtered, 8);
-
-		
-% 
-% midpt = ceil(length(Mag)/2);
-% window_width = 1000;
-% viewing_window = midpt-window_width:midpt+window_width;
-% 
-% plotStruct(pStruct,depth);
-% 
-% 
-% stem(abs(Mag(viewing_window)));
-% 
+plotStruct(pStruct,2);
 
 end
-% title ('frequency breakdown');
+
 ##### SOURCE END #####
 --></body></html>

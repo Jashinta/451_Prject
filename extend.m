@@ -43,33 +43,12 @@ norm_mag = mag - mean(mag);
 d140 = drop140();
 
 
-% IIR maximally flat Lowpass filter designed using the MAXFLAT function.
-% All frequency values are in Hz.
-% Fs = 1000;  % Sampling Frequency
-
-% Nb = 8;   % Numerator Order
-% Na = 8;   % Denominator Order
-% Fc = 20;  % Cutoff Frequency
-d20  = drop20();
-
-
-% IIR maximally flat Lowpass filter designed using the MAXFLAT function.
-% All frequency values are in Hz.
-Fs = 1000;  % Sampling Frequency
-
-Nb = 8;  % Numerator Order
-Na = 8;  % Denominator Order
-Fc = 3;  % Cutoff Frequency
-d3 = drop3();
-
-
 %% Populate struct array
-
+pStruct(1).name = 'original';
 pStruct(1).x 	= extended(1,1:10000);
 pStruct(1).y 	= extended(2,1:10000);
 pStruct(1).z 	= extended(3,1:10000);
-pStruct(1).mag	= norm_mag;
-
+pStruct(1).mag	= mag;
 
 pStruct(2).name = 'STDF 140HZ filter, N = 500';
 pStruct(2).x	= stdf  ( d140, pStruct( 1 ).x,   500);
@@ -77,35 +56,21 @@ pStruct(2).y	= stdf  ( d140, pStruct( 1 ).y,   500);
 pStruct(2).z	= stdf  ( d140, pStruct( 1 ).z,   500);
 pStruct(2).mag	= stdf  ( d140, pStruct( 1 ).mag, 500);
 
-pStruct(3).name = 'STDF 20HZ filter, N = 2000';
-pStruct(3).x	= stdf  ( d3  , pStruct( 1 ).x,   2000);
-pStruct(3).y	= stdf  ( d3  , pStruct( 1 ).y,   2000);
-pStruct(3).z	= stdf  ( d3  , pStruct( 1 ).z,   2000);
-pStruct(3).mag	= stdf  ( d3  , pStruct( 1 ).mag, 2000);
-
-
-Mag = fftshift(fft(pStruct(2).mag));
+%% Frequency of Unbiased Original Magnitude signal
+figure;
+Mag = fftshift(fft(norm_mag));
 stem(abs(Mag));
+axis([4950 5050 0 11000]);
+title('Unbiased Original Freq Breakdown (5000 is center)');
+
+%% Frequency of Unbiased LowPass Filtered (140 Hz Knee) Magnitude signal
+figure;
+filt_norm_mag = pStruct(2).mag - mean(pStruct(2).mag);
+filt_Mag = fftshift(fft(filt_norm_mag));
+stem(abs(filt_Mag));
+axis([4950 5050 0 18000]);
 
 %% Plot
-plotStruct(pStruct,3);
-
-
-% Mag = fftshift(fft(filtered));
-
-% spectrogram(filtered, 8);
-
-		
-% 
-% midpt = ceil(length(Mag)/2);
-% window_width = 1000;
-% viewing_window = midpt-window_width:midpt+window_width;
-% 
-% plotStruct(pStruct,depth);
-% 
-% 
-% stem(abs(Mag(viewing_window)));
-% 
+plotStruct(pStruct,2);
 
 end
-% title ('frequency breakdown');
