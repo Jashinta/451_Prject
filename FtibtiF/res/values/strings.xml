@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Ftibtif</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="X_Axis">X Axis</string>
+    <string name="Y_Axis">Y Axis</string>
+    <string name="Z_Axis">Z Axis</string>
+    <string name="testing">Testing</string>
+    <string name="timestamp_title">Timestamp</string>
+    <string name="pedometer_1">Bad Pedometer</string>
+    <string name="pedometer_2">Average Pedometer</string>
+    
+
+</resources>
