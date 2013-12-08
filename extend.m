@@ -32,9 +32,9 @@ for i = 1:length(accData)
 end
 
 %% Compute squares, magnitude, un bias 
-x2  = extended(1,1:10000).^2;
-y2  = extended(2,1:10000).^2;
-z2  = extended(3,1:10000).^2;
+x2  = extended(1,:).^2;
+y2  = extended(2,:).^2;
+z2  = extended(3,:).^2;
 mag = sqrt(x2+y2+z2);
 
 %% Build filters
@@ -53,9 +53,9 @@ d140 = drop140();
 
 %% Populate struct array
 pStruct(1).name = 'original';
-pStruct(1).x 	= extended(1,1:10000);
-pStruct(1).y 	= extended(2,1:10000);
-pStruct(1).z 	= extended(3,1:10000);
+pStruct(1).x 	= extended(1,:);
+pStruct(1).y 	= extended(2,:);
+pStruct(1).z 	= extended(3,:);
 pStruct(1).mag	= mag;
 
 pStruct(2).name = 'STDF 140HZ filter, N = 500';
@@ -65,19 +65,25 @@ pStruct(2).z	= stdf  ( d140, pStruct( 1 ).z,   500);
 pStruct(2).mag	= stdf  ( d140, pStruct( 1 ).mag, 500);
 
 %% Frequency of Unbiased Original Magnitude signal
+
+window_width = 50;
+
 figure;
 norm_mag = mag - mean(mag);
 Mag = fftshift(fft(norm_mag));
-stem(abs(Mag));
-axis([4950 5050 0 11000]);
+midpt = ceil(length(Mag)/2);
+viewing_window = midpt-window_width:midpt+window_width;
+stem(abs(Mag(viewing_window)));
+%axis([4950 5050 0 11000]);
 title('Unbiased Original Freq Breakdown (5000 is center)');
+
 
 %% Frequency of Unbiased LowPass Filtered (140 Hz Knee) Magnitude signal
 figure;
 filt_norm_mag = pStruct(2).mag - mean(pStruct(2).mag);
 filt_Mag = fftshift(fft(filt_norm_mag));
-stem(abs(filt_Mag));
-axis([4950 5050 0 18000]);
+stem(abs(filt_Mag(viewing_window)));
+%axis([4950 5050 0 18000]);
 title('Unbiased Filtered Freq Breakdown (5000 is center)')
 
 %% Plot
