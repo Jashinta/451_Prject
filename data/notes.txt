@@ -1,0 +1,14 @@
+https://www.dropbox.com/s/cwiajfny9mjkns1/log_2013119_202516.txt
+3753
+3850
+139 steps
+
+https://www.dropbox.com/s/tikcr8uapz4lq73/log_2013119_203132.txt
+3850
+3994
+140 real steps
+
+https://www.dropbox.com/s/w12nvfqpzauuvje/log_2013119_203616.txt
+3394
+4159
+160 real steps
