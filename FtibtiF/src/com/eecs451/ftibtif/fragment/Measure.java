@@ -29,6 +29,9 @@ public class Measure extends Fragment implements SensorEventListener {
 	private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private String fname;
+    
+    private float c_g;
+    
     private int bad_step;
     private int bad_step_high;
     
@@ -63,12 +66,23 @@ public class Measure extends Fragment implements SensorEventListener {
         avg_step = 0;
         avg_step_high = 0;
         short_list = new float[100];
+        for (int i = 0; i < 100; i++)
+		{
+			short_list[i] = 0;
+		}
         short_list_count = 0;
+        
         long_list = new float[2000];
+        for (int i = 0; i < 2000; i++)
+		{
+			long_list[i] = 0;
+		}
         long_list_count = 0;
         
         currTime = new Time();
         currTime.setToNow();
+        
+        c_g = (float) Math.pow(9.81, 2);
 
         fname = Environment.getExternalStorageDirectory().getPath() + "/451/log_";
         fname += String.format("%d%d%d_", currTime.year, currTime.month, currTime.monthDay);
@@ -112,7 +126,9 @@ public class Measure extends Fragment implements SensorEventListener {
 		TextView tvtimestamp= (TextView) getView().findViewById(R.id.timestamp);
 		TextView bad_stepcount = (TextView) getView().findViewById(R.id.bad_pedometer);
 		TextView avg_stepcount = (TextView) getView().findViewById(R.id.avg_pedometer);
-		
+		TextView tv_fname = (TextView) getView().findViewById(R.id.fname);
+//		TextView tv_d1 = (TextView) getView().findViewById(R.id.debug_1);
+//		TextView tv_d2 = (TextView) getView().findViewById(R.id.debug_2);
 		
 		long timestamp = event.timestamp;
 		float x = event.values[0];
@@ -129,12 +145,12 @@ public class Measure extends Fragment implements SensorEventListener {
 		}
 		
 		//Bad stepcounter
-		if ( (mag > 11) && (bad_step_high == 0) )
+		if ( (mag > 2.0 * c_g) && (bad_step_high == 0) )
 		{
 			bad_step_high = 1;
 			bad_step ++;
 		}
-		if ( (mag < 9) && (bad_step_high == 1) )
+		if ( (mag < 0.25 * c_g) && (bad_step_high == 1) )
 		{
 			bad_step_high = 0;
 		}
@@ -153,25 +169,30 @@ public class Measure extends Fragment implements SensorEventListener {
 		{
 			long_list_count = 0;
 		}
-		if (sample_num > 2000)
+		for (int i = 0; i < 100; i++)
 		{
-			for (int i = 0; i < 100; i++)
-			{
-				short_average += short_list[i];
-			}
+			short_average += short_list[i];
+		}
+		for (int i = 0; i < 2000; i++)
+		{
+			long_average += long_list[i];
+		}
+		if (sample_num < 100) {
+			short_average /= sample_num;
+		} else {
 			short_average /= 100;
-			for (int i = 0; i < 2000; i++)
-			{
-				long_average += long_list[i];
-			}
+		}
+		if (sample_num < 2000) {
+			long_average /= sample_num;
+		} else {
 			long_average /= 2000;
 		}
-		if ( (short_average > long_average) && (avg_step_high == 0) )
+		if ( (short_average > long_average * 1.1) && (avg_step_high == 0) )
 		{
 			avg_step_high = 1;
 			avg_step++;
 		}
-		if ( (short_average < long_average) && (avg_step_high == 1) )
+		if ( (short_average < long_average * 0.9) && (avg_step_high == 1) )
 		{
 			avg_step_high = 0;
 		}
@@ -181,6 +202,8 @@ public class Measure extends Fragment implements SensorEventListener {
 		try{
             String s = String.format(Locale.US, "ACC %dus %f %f %f\n\n", (timestamp - initTime)/1000, x, y, z);
             fos.write(s.getBytes());
+//            String s1 = String.format(Locale.US, "magnitude %dus %f\n\n", (timestamp - initTime)/1000, mag);
+//            fos.write(s1.getBytes());
         }catch(Exception e){
         	e.printStackTrace();
         }
@@ -194,6 +217,9 @@ public class Measure extends Fragment implements SensorEventListener {
 			tvtimestamp.setText(String.format("%d s", (timestamp - initTime)/1000000000));
 			bad_stepcount.setText(String.format("%d Steps", bad_step));
 			avg_stepcount.setText(String.format("%d Steps", avg_step));
+			tv_fname.setText(fname);
+//			tv_d1.setText(String.format("%.3f", short_average));
+//			tv_d2.setText(String.format("%.3f", long_average));
 			
 			oldTimestamp = timestamp;
 		}
