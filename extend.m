@@ -1,6 +1,6 @@
 %% Fun With Filters!!!
-function extend (filename)
-
+function extend (fileName)
+close all;
 % So far, I have had little trouble with MATLAB and the sensor app interface,
 % and I have been able to make some good progress on filtering and viewing
 % data. Thus far I have not really implemented any step counting algorithms.
@@ -9,33 +9,43 @@ function extend (filename)
 % Window. You can see from both the sample and frequency domain plots 
 % that the stdf works pretty well.
 
-
+%% Read in data
 if (nargin == 0)
-	filename = 'data/walking_from_cc_11_11.txt';
+	fileName = 'data/walking_from_cc_11_11.txt';
 end
 
-close all;
+fileId= fopen(fileName);
+rawData= fscanf(fileId, '%*s %d %*s %f %f %f');
+rawData = reshape( rawData, 4, length(rawData)/4 );
+
+%% Normalize time stamps to every 100us and drop doubles
+
+rawData(1,:) = round( rawData(1,:) / 100 );
+[~,ia,~] = unique(rawData(1,:));
+accData = rawData(:,ia);
 
 %% parse and resample sensor data
-androidAPP(filename);
-load data.mat;
 n = 1:accData(1, end); 
 extended = zeros(3,length(n));
-count = 0;
+count = 1;
 for i = 1:length(accData)
-    while (accData(1,i) > count)
-        count = count + 1;
+    while (accData(1,i) >= count)
         extended(1,count) =  accData(2,i);
         extended(2,count) =  accData(3,i);
-        extended(3,count) =  accData(4,i);  
+        extended(3,count) =  accData(4,i);
+        count = count + 1;
     end
 end
+
+
 
 %% Compute squares, magnitude, un bias 
 x2  = extended(1,:).^2;
 y2  = extended(2,:).^2;
 z2  = extended(3,:).^2;
 mag = sqrt(x2+y2+z2);
+
+
 
 %% Build filters
 
@@ -59,10 +69,10 @@ pStruct(1).z 	= extended(3,:);
 pStruct(1).mag	= mag;
 
 pStruct(2).name = 'STDF 140HZ filter, N = 500';
-pStruct(2).x	= stdf  ( d140, pStruct( 1 ).x,   500);
-pStruct(2).y	= stdf  ( d140, pStruct( 1 ).y,   500);
-pStruct(2).z	= stdf  ( d140, pStruct( 1 ).z,   500);
-pStruct(2).mag	= stdf  ( d140, pStruct( 1 ).mag, 500);
+pStruct(2).x	= stdf  ( d140, pStruct( 1 ).x,   1000);
+pStruct(2).y	= stdf  ( d140, pStruct( 1 ).y,   1000);
+pStruct(2).z	= stdf  ( d140, pStruct( 1 ).z,   1000);
+pStruct(2).mag	= stdf  ( d140, pStruct( 1 ).mag, 1000);
 
 %% Frequency of Unbiased Original Magnitude signal
 
