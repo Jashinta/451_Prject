@@ -15,3 +15,9 @@ waited 5 seconds before starting
 3394
 4159
 160 real steps
+
+
+4159
+5265
+
+100 shakeweights
