@@ -20,9 +20,9 @@ close all;
 androidAPP(filename);
 load data.mat;
 n = 1:accData(1, end); 
-extended = zeros(3,length(n));
+extended = zeros(3,length(n)/14);
 count = 0;
-for i = 1:length(accData)
+for i = 1:length(accData)/14
     while (accData(1,i) > count)
         count = count + 1;
         extended(1,count) =  accData(2,i);
