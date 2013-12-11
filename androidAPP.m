@@ -13,15 +13,15 @@ function androidAPP(fileName)
 display('writing file.....');
 fileId= fopen(fileName);
 
-dataCell= textscan(fileId, '%s %d %*s %f %f %f');
+dataCell= textscan(fileId, '%s %f %s %f %f %f');
 
 data= struct('type', [], 'time', [], 'xVal', [], 'yVal', [], 'zVal',[]);
 
-gyroData=double([]);
-accData=double([]);
-magData=double([]);
+gyroData=single([]);
+accData=single([]);
+magData=single([]);
 
-for i=1:length(dataCell{6})
+for i=1:length(dataCell{2})
     data(i).type= dataCell{1}(i);
     data(i).time= dataCell{2}(i);
     data(i).xVal= dataCell{4}(i);
