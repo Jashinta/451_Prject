@@ -63,10 +63,10 @@ hold on;
 plot(1:n, long_power*2,'r');
 plot(1:n, short_power,'g');
 plot(full_array);
-axis([4000 5000 -5 300]);
+axis([0 10000 -5 300]);
 title('Steps Counter (Blue) Overlayed On Short (Green) & Long (Red) Power');
 ylabel('Power/ Steps');
-xlabel('Samples 4000-5000 of 15804');
+xlabel('Samples 0-10000 of 15804');
 
 %stem(steps_array);
 % 
