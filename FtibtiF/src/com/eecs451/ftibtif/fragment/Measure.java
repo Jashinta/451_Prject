@@ -85,7 +85,7 @@ public class Measure extends Fragment implements SensorEventListener {
         c_g = (float) Math.pow(9.81, 2);
 
         fname = Environment.getExternalStorageDirectory().getPath() + "/451/log_";
-        fname += String.format("%d%d%d_", currTime.year, currTime.month, currTime.monthDay);
+        fname += String.format("%d%d%d_", currTime.year, currTime.month + 1, currTime.monthDay);
         fname += String.format("%d%d%d", currTime.hour, currTime.minute, currTime.second);
         fname += ".txt";
         mfile = new File(fname);
