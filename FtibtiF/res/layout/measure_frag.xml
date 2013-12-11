@@ -114,6 +114,65 @@
 	    		android:gravity="center"/>
 		</TableRow>
 	</TableLayout>
+ 	<TableLayout
+		android:paddingTop="10dip"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:stretchColumns="*">
+		<TableRow>
+		    <TextView
+	    		android:layout_width="fill_parent" 
+	    		android:layout_height="wrap_content"
+	    		android:text="@string/debug_1"
+	    		android:gravity="center"/>
+		</TableRow>
+		<TableRow>
+		    <TextView
+	    		android:layout_width="fill_parent" 
+	    		android:layout_height="wrap_content"
+	    		android:id="@+id/debug_1"
+	    		android:gravity="center"/>
+		</TableRow>
+	</TableLayout>
+ 	<TableLayout
+		android:paddingTop="10dip"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:stretchColumns="*">
+		<TableRow>
+		    <TextView
+	    		android:layout_width="fill_parent" 
+	    		android:layout_height="wrap_content"
+	    		android:text="@string/debug_2"
+	    		android:gravity="center"/>
+		</TableRow>
+		<TableRow>
+		    <TextView
+	    		android:layout_width="fill_parent" 
+	    		android:layout_height="wrap_content"
+	    		android:id="@+id/debug_2"
+	    		android:gravity="center"/>
+		</TableRow>
+	</TableLayout>
+	 	<TableLayout
+		android:paddingTop="10dip"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<TableRow>
+		    <TextView
+	    		android:layout_width="fill_parent" 
+	    		android:layout_height="wrap_content"
+	    		android:text="@string/fname"
+	    		android:gravity="center"/>
+		</TableRow>
+		<TableRow>
+		    <TextView
+	    		android:layout_width="fill_parent" 
+	    		android:layout_height="wrap_content"
+	    		android:id="@+id/fname"
+	    		android:gravity="center"/>
+		</TableRow>
+	</TableLayout>
 	<!--ImageView
 		android:paddingTop="10dip"
 		android:layout_width="wrap_content" 

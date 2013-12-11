@@ -9,8 +9,11 @@
     <string name="Z_Axis">Z Axis</string>
     <string name="testing">Testing</string>
     <string name="timestamp_title">Timestamp</string>
-    <string name="pedometer_1">Bad Pedometer</string>
+    <string name="pedometer_1">Threshold Pedometer</string>
     <string name="pedometer_2">Average Pedometer</string>
+    <string name="debug_1"></string>
+    <string name="debug_2"></string>
+    <string name="fname">File save location</string>
     
 
 </resources>
