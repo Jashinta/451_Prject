@@ -7,7 +7,7 @@ close all;
 % Although I have implemented a Short-Time-Digital-Filter (stdf.m) that
 % uses a FIR filter designed by the FDATool and applies a general Hanning
 % Window. You can see from both the sample and frequency domain plots 
-% that the stdf works pretty well. blah blah blah
+% that the stdf works pretty well.
 
 %% Read in data
 if (nargin == 0)
