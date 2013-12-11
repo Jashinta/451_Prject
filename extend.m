@@ -1,14 +1,6 @@
 %% Fun With Filters!!!
 function extend (fileName)
 close all;
-% So far, I have had little trouble with MATLAB and the sensor app interface,
-% and I have been able to make some good progress on filtering and viewing
-% data. Thus far I have not really implemented any step counting algorithms.
-% Although I have implemented a Short-Time-Digital-Filter (stdf.m) that
-% uses a FIR filter designed by the FDATool and applies a general Hanning
-% Window. You can see from both the sample and frequency domain plots 
-% that the stdf works pretty well.
-
 %% Read in data
 if (nargin == 0)
 	fileName = 'data/walking_from_cc_11_11.txt';
@@ -38,13 +30,6 @@ for i = 1:length(accData)
     end
 end
 
-zeroFill = zeros(3, length(n));
-zeroFill(:,accData(1,:) + 1) = accData(2:4, :); 
-xz2  = zeroFill(1,:).^2;
-yz2  = zeroFill(2,:).^2;
-zz2  = zeroFill(3,:).^2;
-magz = sqrt(xz2+yz2+zz2);
-
 
 %% Compute squares, magnitude
 x2  = extended(1,:).^2;
@@ -61,21 +46,10 @@ pStruct(1).z 	= extended(3,:);
 pStruct(1).mag	= mag;
 
 
-%% Incramental de biasing
-
-pStruct(2) = deBias( pStruct(1), 50 );
-
-pStruct(3).name = 'original, full length debias';
-pStruct(3).x 	= extended(1,:) - mean( extended(1,:) );
-pStruct(3).y 	= extended(2,:) - mean( extended(1,:) );
-pStruct(3).z 	= extended(3,:) - mean( extended(1,:) );
-pStruct(3).mag	= mag -  mean( mag );
-
-
+%% Step counting
 threshold = 15;
 timeMin = 600;
 timeMax = 10000;
-
 
 [c1, steps] = stepCount(pStruct(1).mag, threshold, timeMin, timeMax);
 
@@ -97,10 +71,8 @@ title('Extended accData');
 xlabel('Time (0.1ms), samples 4000 - 5000 of 15804');
 ylabel('Magnitude');
 
-
 disp(c1);
 
-
- plotStruct(pStruct,2);
+plotStruct(pStruct,1);
 
 end
