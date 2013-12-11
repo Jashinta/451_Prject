@@ -101,6 +101,6 @@ ylabel('Magnitude');
 disp(c1);
 
 
- %plotStruct(pStruct,3);
+ plotStruct(pStruct,2);
 
 end
