@@ -1,14 +1,6 @@
 %% Fun With Filters!!!
 function extend (fileName)
 close all;
-% So far, I have had little trouble with MATLAB and the sensor app interface,
-% and I have been able to make some good progress on filtering and viewing
-% data. Thus far I have not really implemented any step counting algorithms.
-% Although I have implemented a Short-Time-Digital-Filter (stdf.m) that
-% uses a FIR filter designed by the FDATool and applies a general Hanning
-% Window. You can see from both the sample and frequency domain plots 
-% that the stdf works pretty well.
-
 %% Read in data
 if (nargin == 0)
 	fileName = 'data/walking_from_cc_11_11.txt';
@@ -38,34 +30,12 @@ for i = 1:length(accData)
     end
 end
 
-zeroFill = zeros(3, length(n));
-zeroFill(:,accData(1,:) + 1) = accData(2:4, :); 
-xz2  = zeroFill(1,:).^2;
-yz2  = zeroFill(2,:).^2;
-zz2  = zeroFill(3,:).^2;
-magz = sqrt(xz2+yz2+zz2);
 
-
-%% Compute squares, magnitude, un bias 
+%% Compute squares, magnitude
 x2  = extended(1,:).^2;
 y2  = extended(2,:).^2;
 z2  = extended(3,:).^2;
 mag = sqrt(x2+y2+z2);
-
-
-
-%% Build filters
-
-% Equiripple Lowpass filter designed using the FIRPM function.
-% All frequency values are in Hz.
-% Fs = 1000;  % Sampling Frequency
-
-% Fpass = 1;               % Passband Frequency
-% Fstop = 140;             % Stopband Frequency
-% Dpass = 0.057501127785;  % Passband Ripple
-% Dstop = 0.0001;          % Stopband Attenuation
-% dens  = 20;              % Density Factor
-d140 = drop140();
 
 
 %% Populate struct array
@@ -75,54 +45,34 @@ pStruct(1).y 	= extended(2,:);
 pStruct(1).z 	= extended(3,:);
 pStruct(1).mag	= mag;
 
-% pStruct(2).name = 'zeroFill';
-% pStruct(2).x 	= zeroFill(1,:);
-% pStruct(2).y 	= zeroFill(2,:);
-% pStruct(2).z 	= zeroFill(3,:);
-% pStruct(2).mag	= magz;
 
-% pStruct(3).name = 'STDF 140HZ filter, N = 500';
-% pStruct(3).x	= stdf  ( d140, pStruct( 1 ).x,   1000);
-% pStruct(3).y	= stdf  ( d140, pStruct( 1 ).y,   1000);
-% pStruct(3).z	= stdf  ( d140, pStruct( 1 ).z,   1000);
-% pStruct(3).mag	= stdf  ( d140, pStruct( 1 ).mag, 1000);
+%% Step counting
+threshold = 15;
+timeMin = 600;
+timeMax = 10000;
 
-% pStruct(4).name = 'STDF 140HZ filter, N = 500, zeroFill';
-% pStruct(4).x	= stdf  ( d140, pStruct( 2 ).x,   1000);
-% pStruct(4).y	= stdf  ( d140, pStruct( 2 ).y,   1000);
-% pStruct(4).z	= stdf  ( d140, pStruct( 2 ).z,   1000);
-% pStruct(4).mag	= stdf  ( d140, pStruct( 2 ).mag, 1000);
+[c1, steps] = stepCount(pStruct(1).mag, threshold, timeMin, timeMax);
 
-
-%% Incramental de biasing
-
-pStruct(2) = deBias( pStruct(1), 10000 );
-
-
-
-%% Frequency of Unbiased Original Magnitude signal
-
-window_width = 50;
+hold on;
+plot(steps.*35, '--r');
+plot(pStruct(1).mag);
+axis([1.5E5 7E5 0 35]);
+title('Step locations overlaid on accData');
+xlabel('Time (0.1ms)');
+ylabel('Magnitude');
+legend('Step Locations', 'Extended accData');
 
 figure;
-norm_mag = mag - mean(mag);
-Mag = fftshift(fft(norm_mag));
-midpt = ceil(length(Mag)/2);
-viewing_window = midpt-window_width:midpt+window_width;
-stem(abs(Mag(viewing_window)));
-%axis([4950 5050 0 11000]);
-title('Unbiased Original Freq Breakdown (5000 is center)');
+hold on;
+plot(pStruct(1).mag, 'g');
+axis([400000 500000 0 35]);
 
+title('Extended accData');
+xlabel('Time (0.1ms), samples 4000 - 5000 of 15804');
+ylabel('Magnitude');
 
-%% Frequency of Unbiased LowPass Filtered (140 Hz Knee) Magnitude signal
-figure;
-filt_norm_mag = pStruct(2).mag - mean(pStruct(2).mag);
-filt_Mag = fftshift(fft(filt_norm_mag));
-stem(abs(filt_Mag(viewing_window)));
-%axis([4950 5050 0 18000]);
-title('Unbiased Filtered Freq Breakdown (5000 is center)')
+disp(c1);
 
-%% Plot
-plotStruct(pStruct,2);
+plotStruct(pStruct,1);
 
 end

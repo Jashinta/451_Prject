@@ -24,7 +24,7 @@ for i = 1:depth
 	subplot(4,1,4);
 	plot(pStruct(i).mag);
 	axis([ 0 length(pStruct(i).mag) min(pStruct(i).mag)-1 max(pStruct(i).mag)+1 ]);
-	title('magnitued');
+	title('magnitude');
 
 
 	[ax,h3]=suplabel( pStruct(i).name,'t'); 
