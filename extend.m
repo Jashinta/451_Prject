@@ -26,6 +26,7 @@ accData = rawData(:,ia);
 
 %% parse and resample sensor data
 n = 1:accData(1, end); 
+
 extended = zeros(3,length(n));
 count = 1;
 for i = 1:length(accData)
@@ -37,6 +38,12 @@ for i = 1:length(accData)
     end
 end
 
+zeroFill = zeros(3, length(n));
+zeroFill(:,accData(1,:) + 1) = accData(2:4, :); 
+xz2  = zeroFill(1,:).^2;
+yz2  = zeroFill(2,:).^2;
+zz2  = zeroFill(3,:).^2;
+magz = sqrt(xz2+yz2+zz2);
 
 
 %% Compute squares, magnitude, un bias 
@@ -68,11 +75,30 @@ pStruct(1).y 	= extended(2,:);
 pStruct(1).z 	= extended(3,:);
 pStruct(1).mag	= mag;
 
-pStruct(2).name = 'STDF 140HZ filter, N = 500';
-pStruct(2).x	= stdf  ( d140, pStruct( 1 ).x,   1000);
-pStruct(2).y	= stdf  ( d140, pStruct( 1 ).y,   1000);
-pStruct(2).z	= stdf  ( d140, pStruct( 1 ).z,   1000);
-pStruct(2).mag	= stdf  ( d140, pStruct( 1 ).mag, 1000);
+% pStruct(2).name = 'zeroFill';
+% pStruct(2).x 	= zeroFill(1,:);
+% pStruct(2).y 	= zeroFill(2,:);
+% pStruct(2).z 	= zeroFill(3,:);
+% pStruct(2).mag	= magz;
+
+% pStruct(3).name = 'STDF 140HZ filter, N = 500';
+% pStruct(3).x	= stdf  ( d140, pStruct( 1 ).x,   1000);
+% pStruct(3).y	= stdf  ( d140, pStruct( 1 ).y,   1000);
+% pStruct(3).z	= stdf  ( d140, pStruct( 1 ).z,   1000);
+% pStruct(3).mag	= stdf  ( d140, pStruct( 1 ).mag, 1000);
+
+% pStruct(4).name = 'STDF 140HZ filter, N = 500, zeroFill';
+% pStruct(4).x	= stdf  ( d140, pStruct( 2 ).x,   1000);
+% pStruct(4).y	= stdf  ( d140, pStruct( 2 ).y,   1000);
+% pStruct(4).z	= stdf  ( d140, pStruct( 2 ).z,   1000);
+% pStruct(4).mag	= stdf  ( d140, pStruct( 2 ).mag, 1000);
+
+
+%% Incramental de biasing
+
+pStruct(2) = deBias( pStruct(1), 10000 );
+
+
 
 %% Frequency of Unbiased Original Magnitude signal
 
