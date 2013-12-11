@@ -12,7 +12,7 @@ r_yvalue = interp1(time, yvalue, r_time);
 r_zvalue = interp1(time, zvalue, r_time);
 
 mag = sqrt( r_xvalue.^2 + r_yvalue.^2 + r_zvalue.^2 );
-normalized_mag = mag;
+normalized_mag = mag - mean(mag);
 n   = length(normalized_mag);
 
 short_m     = 10;
