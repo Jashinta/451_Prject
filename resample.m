@@ -42,10 +42,8 @@ for t = long_m+1:length(normalized_mag)
     long_power(t) = (sum(abs(long_freq) .^ 2))/long_m;
 end
 
-threshold = 1.5:0.1:2.5;
-for i = 1:length(threshold)
-    step_count(i) = numel(find(diff(short_power(long_m+1:end) > long_power(long_m+1:end).*threshold(i)) == 1));
-end
+threshold = 2.0;
+step_count(i) = numel(find(diff(short_power(long_m+1:end) > long_power(long_m+1:end).*threshold) == 1));
 
 plot(threshold, (step_count - 140).^2);
 
