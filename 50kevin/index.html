@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Overview for EECS 451 project 50% Kevin">
+    <meta name="author" content="Kevin Kiningham">
+
+    <title>
+      50% Kevin - EECS 451
+    </title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="./dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./dist/css/docs.css" rel="stylesheet">
+    <link href="./dist/css/50kevin.css" rel="stylesheet">
+  </head>
+
+  <body data-spy="scroll" data-target=".kevin-navbar">
+
+    <!-- Navbar Banner -->
+    <div class="navbar navbar-inverse navbar-fixed-top kevin-navbar" role="navigation">
+      <div class="container">
+        <!-- Navagation header -->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">50% Kevin</a>
+        </div>
+
+        <!-- Nagation links -->
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="">
+              <a href="#overview">Overview</a>
+            </li>
+            <li class="">
+              <a href="#data_collection">Data Collection</a>
+            </li>
+            <li class="">
+              <a href="#methods">Methods</a>
+            </li>
+            <li class="">
+              <a href="#results">Results</a>
+            </li>
+            <li class="">
+              <a href="#conclusion">Conclusion</a>
+            </li>
+            <li class="">
+              <a href="#references">References & Downloads</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main header -->
+    <div class="jumbotron masthead">
+      <div class="container">
+        <h1>50% Kevin</h1>
+        <p>DSP techniques for step counting</p>
+      </div>
+    </div>
+
+    <!-- Main text -->
+    <div class="container">
+      <div class="row">
+        <div id="overview" class="section">
+          <div class="page-header">
+            <h1 id="overview-header">Overview</h1>
+          </div>
+          <p>
+            In recent years, personal fitness trackers have become increasingly popular.
+            Fitness wristbands, such as the Fitbit Flex, have become particularly popular due to their convenient form factor and ease of use.
+            One core function of these fitness bands is daily activity tracking using step counting, usually using an accelerometer located in the band.
+            Due to factors such as arm swing, an accelerometer located on the wrist presents a significantly noisier picture of the forces felt by the body when walking when compared to a more traditional location for a pedometer.
+            Because of this, step counting using an accelerometer located on the wrist presents a unique challenge for step counting.
+          </p>
+          <p>
+            In this project, we examine several DSP techniques to extract a step count from accelerometer data.
+            We then add an FFT-based filter to help our algorithm perform well on noisy, wrist-based accelerometer data.
+            We then present several tunable constants that allow our algorithm to trade-off false positives and false negatives, as well as trade performance for accuracy.
+            Finally, we compare our accuracy to that of a commercially available device, the Fitbit Flex.
+          </p>
+        </div>
+        <div id="data_collection" class="section">
+          <div class="page-header">
+            <h1 id="data_collection-header">Data Collection</h1>
+          </div>
+          <p>
+            When we started gathering data using our given sensor application, we encountered several issues that led us to develop our own android application to gather and analyze data.
+          </p>
+          <p>
+            The most important issue was the timestamps for gathered data was occasionally the same.
+            This was because the application outputted data with a millisecond time scale.
+            We created our own android application to log accelerometer data and output events time steps with a microsecond timescale.
+            This allowed us to distinguish between closer occurring events.
+          </p>
+          <p>
+            Another problem that we encountered was that we did not know what the accelerometer data was sampled at.
+            The values between each event varied from 1ms to 20ms in the original application.
+            With our own application, we managed to achieve a sample rate of about 100 Hz.
+          </p>
+          <p>
+            Once we gathered this data on the Android application, we wanted to do real time processing for step counts.
+            For each event recorded, the magnitude of acceleration was calculated.
+            This was then compared to two different threshold values.
+            This magnitude would have to go below the lower threshold and above the higher threshold for a step to be counted. 
+          </p>
+          <p>
+            The second pedometer algorithm on the Android phone used two moving averages.
+            It used the average magnitude for the last two thousand samples as a baseline.
+            The average for the last one hundred samples was then used as a comparison to the baseline. 
+          </p>
+          <p>
+            These two pedometer algorithms were not very accurate on the phone. For more accurate detection, we would have to filter our collected data.
+          </p>
+          <p>
+            The Fitbit step count was acquired by first syncing the Fitbit Flex with the Fitbit Connect software to obtain the current step count on the device.
+            Second, a waiting period was taken where our team member wearing the Flex did not move.
+            Following this, the Flex was synced again to ensure no steps had been added.
+            The trial was then started, and upon completion, the Flex was immediately synced to obtain the final step count.
+          </p>
+        </div>
+        <div id="methods" class="section">
+          <div class="page-header">
+            <h1 id="methods-header">Methods</h1>
+          </div>
+          <img src="./img/test_data.png" style="float:left;">
+          <img src="./img/full_window.png" style="float:right;">
+          <br style="clear:both;">
+          <h3>Method 1</h3>
+          <p>
+            The first method we tried was power thresholding using a simple causal moving average.
+            In addition, to reduce noise, we apply a windowed filter to the input.
+          </p>
+          <p>
+            Since the phone accelerometer is not sampled at a constant rate, the first step was to normalize the sampling rate to 100Hz by doing a linear interpolation.
+          </p>
+          <div class="fig">
+            <img src="./img/normalized_mag.png">
+            <div class="code">
+              <p>--- Code ---</p>
+              time   = accData(1, :);<br>
+              xvalue = accData(2, :);<br>
+              yvalue = accData(3, :);<br>
+              zvalue = accData(4, :);<br>
+              <br> 
+              r_time   = time(1):10000:time(end);<br>
+              r_xvalue = interp1(time, xvalue, r_time);<br>
+              r_yvalue = interp1(time, yvalue, r_time);<br>
+              r_zvalue = interp1(time, zvalue, r_time);<br>
+              <br>
+              mag = sqrt( r_xvalue.^2 + r_yvalue.^2 + r_zvalue.^2 );<br>
+              normalized_mag = mag - mean(mag);<br>
+            </div>
+            <br style="clear:both;" />
+          </div>
+          <p>
+            Next, we break up the signal into overlapping windows of size 200 (representing about 2 seconds of accelerometer data) and windows of size 10 (representing about 0.1 seconds).
+            This gives us a "long term" signal, representing the steady state of the accelerometer, and a "short term" signal, representing the instant state of the accelerometer.
+          </p>
+          <p>
+            Then, we compute a windowed FFTs for each signal, bandpass filter out all frequencies that result in noise, and compute the average power for the filtered signal.
+          </p>
+          <div class="fig">
+            <img src="./img/long_and_short_power.png">
+            <div class="code">
+              <p>--- Code ---</p>
+              short_m     = 10;<br>
+              short_power = zeros(n);<br>
+              for t = short_m+1:length(normalized_mag)<br>
+              &nbsp;&nbsp;short_freq = fftshift(fft(normalized_mag(t-short_m:t)))/sqrt(short_m);<br>
+              &nbsp;&nbsp;short_freq = filter(short_freq); <br>
+              &nbsp;&nbsp;short_power(t) = (sum(abs(short_freq) .^ 2))/short_m;<br>
+              end<br>
+              <br>
+              long_m = 200;<br>
+              long_power = zeros(n);<br>
+              for t = long_m+1:length(normalized_mag)<br>
+              &nbsp;&nbsp;long_freq = fftshift(fft(normalized_mag(t-long_m:t)))/sqrt(long_m);<br>
+              &nbsp;&nbsp;long_freq = filter(long_freq); <br>
+              &nbsp;&nbsp;long_power(t) = (sum(abs(long_freq) .^ 2))/long_m;<br>
+              end<br>
+            </div>
+            <br style="clear:both;" />
+          </div>
+          <p>
+            Finally, we turn our power signal into steps by creating an impulse whenever the short signal power is greater than the long signal power multiplied by a threshold value.
+            We then locate all the rising edges in the signal, and sum the number of rising edges.
+          </p>
+          <div class="fig">
+            <img src="./img/final_step_fft.png">
+            <div class="code">
+              <p>--- Code ---</p>
+              threshold = 2.0;<br>
+              step_count = numel(<br>
+              &nbsp;&nbsp;find(diff(<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;short_power(long_m+1:end) &#62; long_power(long_m+1:end).*threshold) == 1<br>
+              &nbsp;&nbsp;)<br>
+              );<br>
+            </div>
+            <br style="clear:both;" />
+          </div>
+          <p>
+            In addition, notice that we have several parameters that we can adjust for this method.
+            The first is the window size.
+            We chose 200 for the long window and 10 for the short window because it produced the best results while still providing enough frequencies to be filtered correctly.
+          </p>
+          <p>
+            The second is the threshold factor.
+            We experimented with several constants and decided on two because it provided the best results on a number of test cases we used.
+            Below is our mean error squared for the three test cases provide vs. the threshold factor.
+            As you can see a value of 2.0 gave the minimum error.
+          </p>
+          <div class="fig">
+            <img src="./img/errors.png">
+            <br style="clear:both;" />
+          </div>
+          <h3>Method 2</h3>
+          <p>
+            This method is targeted toward an embedded platform because embedded systems, like a FitBit, are power, performance and memory limited.<br>
+            This means that computing a real time FFT or long window moving averages is out of the question.<br>
+            The step counting problem on such a constrained platform requires a novel approach.<br>
+          </p>
+          <p>
+            Our group's Android app was used to collect data, which dumped text files in the same format as the class's Android app.<br>
+            We wrote our own parse function, which is embedded in extend.m, to allow for more control of the formatted data.<br>
+            The formatted data is then extended, which is needed because the Android API does not allow for periodic sampling.<br>
+            Extension is performed by repeating the current value of the signal until the next input time stamp.<br>
+            I.e. if a sin wave was input the output would be an upsampled sinusoidal stair step function.<br>
+          </p>
+          <div class="fig">
+            <img src="./img/xyzmag_method2.png">
+            <div class="code">
+              <p>--- Code ---</p>
+              extended = zeros(3,length(n));<br>
+              count = 1;<br>
+              for i = 1:length(accData)<br>
+              &nbsp;&nbsp;while (accData(1,i) &#62;= count)<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;extended(1,count) =  accData(2,i);<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;extended(2,count) =  accData(3,i);<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;extended(3,count) =  accData(4,i);<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;count = count + 1;<br>
+              &nbsp;&nbsp;end<br>
+              end<br>
+            </div>
+            <br style="clear:both;" />
+          </div>
+          <p>
+            The above mentioned method of upsampling was chosen over the classical zero filling approach because zero filing would increase the number of peaks (like an impulse train), and not making a smooth graph.<br>
+            A smooth graph could also be obtained by using an interpolation function, but interpolation is expensive and deemed too computationally heavy for an embedded platform.<br>
+            The Pythagorean magnitude is calculated from the extended data and is used as the sole source of accelerometer data.<br>
+            The magnitude is used alone because the orientation of the sensor is not known nor constant during sampling.<br>
+            The magnitude accounts for all of the directions and is immune to orientation.<br>
+            Furthermore, the magnitude sequence is immune to bias because the bias is always equal to 9.8, gravity.<br>
+          </p>
+          <div class="fig">
+            <div class="code">
+              <p>--- Code ---</p>
+              x2  = extended(1,:).^2;<br>
+              y2  = extended(2,:).^2;<br>
+              z2  = extended(3,:).^2;<br>
+              mag = sqrt(x2+y2+z2);<br>
+            </div>
+            <br style="clear:both;" />
+          </div>
+          <p>
+            Finally, the steps can be counted.<br>
+            The Step count is determined by using a threshold amplitude to do edge detection.<br>
+            The time between successive rising edges and falling edges must fall within a set time window to be counted.<br>
+            The combination of amplitude and time window effectively implements a frequency filter and power filter with minimal computation.<br>
+          </p>
+          <div class="fig">
+            <img src="./img/steps_over_accData.png">
+            <div class="code">
+              <p>--- Code ---</p>
+              function count = stepCount (vec, threshold, timeMin, timeMax )<br>
+              &nbsp;&nbsp;edges = diff(vec &#62; threshold);<br>
+              &nbsp;&nbsp;edgeTimes = find(edges == 1 | edges == -1);<br>
+              &nbsp;&nbsp;posEdges = find(edges == 1);<br>
+              &nbsp;&nbsp;if( posEdges(1) == edgeTimes(1) )<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;edgeTimes = downsample(edgeTimes, 2);<br>
+              &nbsp;&nbsp;else<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;edgeTimes = downsample(edgeTimes(2:end), 2);<br>
+              &nbsp;&nbsp;end<br>
+              &nbsp;&nbsp;<br> 
+              &nbsp;&nbsp;count = numel(diff(edgeTimes) &#62; timeMin &#38; diff(edgeTimes) &lt; timeMax);<br>
+              end<br>
+            </div>
+            <br style="clear:both;" />
+          </div>
+        </div>
+        <div id="results" class="section">
+          <div class="page-header">
+            <h1 id="results-header">Results</h1>
+          </div>
+          <table>
+            <tr>
+              <th></th>
+              <th>Method 1 (error%)</th>
+              <th>Method 2 (error%)</th>
+              <th>Fitbit (error%)</th>
+              <th></th>
+            </tr>
+            <tr>
+              <td>160 steps</td>
+              <td>162 (1.25%)</td>
+              <td>159 (-0.625%)</td>
+              <td>165 (3.125%)</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>140 steps</td>
+              <td>150 (7.143%)</td>
+              <td>131 (-6.428%)</td>
+              <td>144 (2.857%)</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>139 steps</td>
+              <td>125 (-10.072%)</td>
+              <td>114 (-17.986%)</td>
+              <td>97  (-30.216%)</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>100 false steps<br>(fast shaking)</td>
+              <td>64</td>
+              <td>4</td>
+              <td>106</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Average Error</td>
+              <td>6.155%</td>
+              <td>8.346%</td>
+              <td>12.066%</td>
+              <td></td>
+            </tr>
+          </table>
+          <br>
+          <p>
+            The first column of the table above states the number of steps we took for each test.
+            This count was achieved simply through counting the number of steps we took per trial.
+            The next 3 columns show the step counting method and resulting error percentage based on the counted steps.
+            The data for method 1 and 2 was collected by starting the android application we wrote to collect accelerometer data at the exact moment the trial began, and immediately stopping it at the end of the trial.
+          </p>  
+          <p>
+            Method 1 resulted in an average error of ~6.155%, which compared to the ~12.066% error of the Fitbit Flex seems to indicate we achieved a more accurate step counting algorithm with method 1.
+            Looking at the results of the Flex, there was an outlier result where the Fitbit counted only 97 steps for a 139 step test.
+            Both method 1 and 2 exhibited a fair amount of error for this trial was well, and we believe this to be a result of minimal hand movement during the trial.
+            In fact, upon returning from trial, our team member reported that he had held is arms tighter to his side than in previous trials.
+          </p>
+          <p>
+            For the 100 false steps test in which the devices were shaking extremely rapidly for ~100 shakes, method 1 resulted in 64 steps being detected.
+            Our purpose for this test however was to create a scenario in which we believe steps should not be recorded because of the unrealistic frequency at which the devices were shaking.
+            Therefore, method 1 performed quite poorly for this test, though it rejected more steps than the Flex which recorded 106 steps.
+            This seems to indicate that the Flex may not be attempting to reject unrealistic data from its step count.
+          </p>
+          <p>
+            The novel embedded platform approach faired really well with an average error of 8.346% over the test suite.
+            This was more accurate than the Fitbit.
+            Furthermore, on the 100_fake test, method 2 was able to reject most of the steps.
+            This was due to the time windowing, which rejects possible steps that are either too fast or too slow, which effectively filters the incoming data, real-time, without convolution or FFT.
+            Method 2 has comparable results to method 1 for actual steps and rejects nearly all of the fake step making method 2 the most effective.
+          </p>
+        </div>
+        <div id="conclusion" class="section">
+          <div class="page-header">
+            <h1 id="conclusion-header">Conclusion</h1>
+          </div>
+          <p>
+            The embedded approach was more successful than expected.
+            Not only did it out perform the Fitbit, method 2 was significantly less computationally expensive than method 1.
+            The final version of method 2 was the product of many iterations, most of the work done for previous iterations is included in a method2.zip but is mostly unused.
+            Although there was a significant amount of unused extra code, including the short time digital filter, it was a good learning experience.
+            The final version of method 2 stood on the shoulders of all of the previous iterations.
+          </p>
+          <p>
+            Method 2 is not done, the parameters, threshold timeMin and timeMax, need to be tuned based on an anatomical model of walking and running and/or a much larger data set.
+            The current choices for the parameters we chosen to best represent the steps taken in our test suite.
+            If more time is put into the tuning of the parameters method 2 look like a very effective method for step counting.
+          </p>
+          <div class="fig">
+            <img src="./img/app.png" height="100%">
+            <br style="clear: both;">
+          </div>
+        </div>
+        <div id="references" class="section">
+          <div class="page-header">
+            <h1 id="references-header">References & Downloads</h1>
+          </div>
+          <ul> 
+            <li>Download - <a href="https://www.facebook.com/l.php?u=https%3A%2F%2Fwww.dropbox.com%2Fs%2Fpcu57uw5jfam07s%2F50_percent_kevin_code.zip&h=4AQGJ1wPe">full submission</a></li>
+            <li>Download - <a href="./FtibtiF.zip">modified app source</a></li>
+            <li>Download - <a href="./androidAPP.m">modified androidAPP.m</a></li>
+            <li>Download - <a href="./method1.m">method1.m</a></li>
+            <li>Download - <a href="./method2.zip">method2.zip</a>
+            <li>Download - <a href="./160_steps.txt">160_steps.txt</a></li>
+            <li>Download - <a href="./140_steps.txt">140_steps.txt</a></li>
+            <li>Download - <a href="./139_steps.txt">139_steps.txt</a></li>
+          </ul>
+          <h3>Authors</h3>
+          <p> Jason Shintani, Kevin Kiningham, Kevin Wei, Richard Ortman </p> 
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> 
+    <script src="./dist/js/bootstrap.js"></script>
+  </body>
+
+</html>

@@ -1,0 +1,3 @@
+[submodule "prettify-matlab"]
+	path = prettify-matlab
+	url = https://github.com/amroamroamro/prettify-matlab.git
